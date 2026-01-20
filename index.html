@@ -2,22 +2,17 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Шахматная школа</title>
+  <title>Школа шахмат</title>
 
-  <!-- Стили шахматной доски -->
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard.min.css"/>
-
-  <!-- Библиотеки -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.13.4/chess.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard.min.js"></script>
+  <!-- cm-chessboard -->
+  <link rel="stylesheet" href="https://unpkg.com/cm-chessboard@8.6.9/assets/chessboard.css">
+  <script src="https://unpkg.com/cm-chessboard@8.6.9/dist/cm-chessboard.js"></script>
 
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      background: #f5f5f5;
+      background: #f4f4f4;
       padding: 20px;
     }
     #board {
@@ -35,20 +30,15 @@
 <div id="board"></div>
 
 <script>
-  const game = new Chess();
-
-  const board = Chessboard('board', {
-    draggable: true,
-    position: 'start',
-    onDrop: function (source, target) {
-      const move = game.move({
-        from: source,
-        to: target,
-        promotion: 'q'
-      });
-
-      if (move === null) return 'snapback';
-    }
+  window.addEventListener("load", function () {
+    new cmChessboard.Chessboard(document.getElementById("board"), {
+      position: cmChessboard.FEN.start,
+      style: {
+        pieces: {
+          file: "https://unpkg.com/cm-chessboard@8.6.9/assets/pieces/staunty.svg"
+        }
+      }
+    });
   });
 </script>
 
