@@ -1,45 +1,89 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Школа шахмат</title>
+<meta charset="UTF-8">
+<title>Школа шахмат</title>
 
-  <!-- cm-chessboard -->
-  <link rel="stylesheet" href="https://unpkg.com/cm-chessboard@8.6.9/assets/chessboard.css">
-  <script src="https://unpkg.com/cm-chessboard@8.6.9/dist/cm-chessboard.js"></script>
+<link rel="stylesheet" href="libs/chessboard.css">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #f4f4f4;
-      padding: 20px;
-    }
-    #board {
-      width: 400px;
-      margin: 20px auto;
-    }
-  </style>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #f4f4f4;
+  }
+  #board {
+    width: 420px;
+    margin: 20px auto;
+  }
+</style>
 </head>
 
 <body>
 
 <h1>Школа шахмат</h1>
-<p>Перетаскивай фигуры на доске</p>
+<p>Кликни по фигуре, чтобы увидеть возможные ходы</p>
 
 <div id="board"></div>
 
+<script src="libs/chess.js"></script>
+<script src="libs/cm-chessboard.js"></script>
+
 <script>
-  window.addEventListener("load", function () {
-    new cmChessboard.Chessboard(document.getElementById("board"), {
+  const game = new Chess();
+  let selectedSquare = null;
+
+  const board = new cmChessboard.Chessboard(
+    document.getElementById("board"),
+    {
       position: cmChessboard.FEN.start,
-      style: {
-        pieces: {
-          file: "https://unpkg.com/cm-chessboard@8.6.9/assets/pieces/staunty.svg"
-        }
+      sprite: {
+        url: "https://raw.githubusercontent.com/shaack/cm-chessboard/master/assets/pieces/staunty.svg"
       }
-    });
-  });
+    }
+  );
+
+  board.enableMoveInput(onMoveInput);
+
+  function onMoveInput(event) {
+    if (event.type === "click") {
+
+      board.removeMarkers();
+
+      if (selectedSquare === event.square) {
+        selectedSquare = null;
+        return;
+      }
+
+      selectedSquare = event.square;
+
+      const moves = game.moves({
+        square: event.square,
+        verbose: true
+      });
+
+      board.addMarker(event.square, "frame");
+
+      moves.forEach(move => {
+        board.addMarker(move.to, "dot");
+      });
+    }
+
+    if (event.type === "move") {
+      const move = game.move({
+        from: event.from,
+        to: event.to,
+        promotion: "q"
+      });
+
+      if (move) {
+        board.setPosition(game.fen());
+      }
+
+      board.removeMarkers();
+      selectedSquare = null;
+    }
+  }
 </script>
 
 </body>
