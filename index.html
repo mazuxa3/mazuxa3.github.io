@@ -3,88 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <title>Школа шахмат</title>
-
-<link rel="stylesheet" href="libs/chessboard.css">
-
 <style>
   body {
     font-family: Arial, sans-serif;
     text-align: center;
     background: #f4f4f4;
+    padding: 20px;
   }
-  #board {
-    width: 420px;
+  table {
     margin: 20px auto;
+    border-collapse: collapse;
   }
+  td {
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 40px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .white { background: #f0d9b5; }
+  .black { background: #b58863; }
+  .highlight { background: yellow !important; }
 </style>
 </head>
-
 <body>
 
 <h1>Школа шахмат</h1>
 <p>Кликни по фигуре, чтобы увидеть возможные ходы</p>
 
-<div id="board"></div>
-
-<script src="libs/chess.js"></script>
-<script src="libs/cm-chessboard.js"></script>
+<table id="board"></table>
 
 <script>
-  const game = new Chess();
-  let selectedSquare = null;
+// Стартовая позиция (эмодзи)
+const startPos = [
+  ['♜','♞','♝','♛','♚','♝','♞','♜'],
+  ['♟','♟','♟','♟','♟','♟','♟','♟'],
+  ['','','','','','','',''],
+  ['','','','','','','',''],
+  ['','','','','','','',''],
+  ['','','','','','','',''],
+  ['♙','♙','♙','♙','♙','♙','♙','♙'],
+  ['♖','♘','♗','♕','♔','♗','♘','♖']
+];
 
-  const board = new cmChessboard.Chessboard(
-    document.getElementById("board"),
-    {
-      position: cmChessboard.FEN.start,
-      sprite: {
-        url: "https://raw.githubusercontent.com/shaack/cm-chessboard/master/assets/pieces/staunty.svg"
-      }
-    }
-  );
+let selected = null;
 
-  board.enableMoveInput(onMoveInput);
-
-  function onMoveInput(event) {
-    if (event.type === "click") {
-
-      board.removeMarkers();
-
-      if (selectedSquare === event.square) {
-        selectedSquare = null;
-        return;
-      }
-
-      selectedSquare = event.square;
-
-      const moves = game.moves({
-        square: event.square,
-        verbose: true
-      });
-
-      board.addMarker(event.square, "frame");
-
-      moves.forEach(move => {
-        board.addMarker(move.to, "dot");
-      });
-    }
-
-    if (event.type === "move") {
-      const move = game.move({
-        from: event.from,
-        to: event.to,
-        promotion: "q"
-      });
-
-      if (move) {
-        board.setPosition(game.fen());
-      }
-
-      board.removeMarkers();
-      selectedSquare = null;
-    }
-  }
-</script>
-
-</body>
-</html>
+function createBoard() {
+  const table = document.getElementById('board');
+  table.innerHTML = '';
+  for (let i = 0; i < 8; i++) {
+    const row = document.createElement('tr');
+    for (let j = 0; j < 8; j++) {
+      const cell = document.createElement('td');
+      cell.className = (i+j)%2 === 0 ? 'white' : 'black';
+      cell.dataset.row = i;
+      cell.dataset.col = j;
+      cell.textContent = startPos[i][j];
+      cell.addEventLi
